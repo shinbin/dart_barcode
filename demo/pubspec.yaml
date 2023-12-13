@@ -19,8 +19,8 @@ dependencies:
   pdf:
 
 dependency_overrides:
-  barcode:
-    path: ../barcode
+#  barcode:
+#    path: ../barcode
   barcode_image:
     path: ../image
   barcode_widget:
