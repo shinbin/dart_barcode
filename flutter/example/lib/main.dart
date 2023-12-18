@@ -27,8 +27,8 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Center(
         child: BarcodeWidget(
-          barcode: Barcode.ean2(), // Barcode type and settings
-          data: '12', // Content
+          barcode: Barcode.upcE(), // Barcode type and settings
+          data: '100802', // Content
           width: 200,
           height: 200,
         ),
