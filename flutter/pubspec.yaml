@@ -17,7 +17,7 @@ dependencies:
   barcode:
     git:
       url: https://github.com/shinbin/dart_barcode
-      ref: fix_ean2_url
+      ref: private_test
       path: barcode
   flutter:
     sdk: flutter
