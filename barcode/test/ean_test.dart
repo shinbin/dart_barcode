@@ -151,6 +151,8 @@ void main() {
     expect(upce.normalize('000154'), equals('00001542'));
     expect(upce.normalize('00001542'), equals('00001542'));
     expect(upce.normalize('000010000052'), equals('00001542'));
+    expect(upce.normalize('001054'), equals('00000514')); //another special case
+
 
     return;
 

@@ -87,24 +87,24 @@ class BarcodeUpcE extends BarcodeEan {
     final pc = data.substring(6,11); //product code
 
     if(['000', '100', '200'].contains(mc.substring(mc.length - 3)) && int.parse(pc) <= 999){
-      // if manufacturer_code[-3:]  in ["000", "100", "200"] and int(product_code) <= 999:
-      // adding the 2nd, 3rd, 9th, 10th, 11th, and 4th code of UPC-A to present the 1st to 6th of UPC-E.
-      return '${data.substring(1,3)}${data.substring(8,11)}${data[3]}';
+      //if manufacturer_code[-3:]  in ["000", "100", "200"] and int(product_code) <= 999:
+      // upce = manufacturer_code[:2] + product_code[-3:] + manufacturer_code[2]
+      return '${mc.substring(0,2)}${pc.substring(pc.length-3)}${mc[2]}';
     }
     else if(mc.substring(mc.length - 2) == '00' && int.parse(pc) <= 99){
-      // elif manufacturer_code[-2:] == '00' and int(product_code) <= 99:
-      //adding the 2nd, 3rd, 4th, 10th, 11th code of UPC-A and a digit 3 to present the 1st to 6th of UPC-E.
-      return '${data.substring(1,4)}${data.substring(9,11)}3';
+      //elif manufacturer_code[-2:] == '00' and int(product_code) <= 99:
+      // upce = manufacturer_code[:3] + product_code[-2:] + "3"
+      return '${mc.substring(0,3)}${pc.substring(pc.length-2)}3';
     }
     else if(mc.substring(mc.length - 1) == '0' && int.parse(pc) <= 9){
       //elif manufacturer_code[-1] == "0" and int(product_code) <= 9:
-      // adding the 2nd to 5th code, 11th code of UPC-A and a digit 4 to present the 1st to 6th of UPC-E.
-      return '${data.substring(1,5)}${data[10]}4';
+      // upce = manufacturer_code[:4] + product_code[-1] + "4"
+      return '${mc.substring(0,4)}${pc.substring(pc.length-1)}4';
     }
     else if(mc.substring(mc.length - 1) != '0' && [5, 6, 7, 8, 9].contains(int.parse(pc))){
-      // elif manufacturer_code[-1] != "0" and int(product_code) in [5,6,7,8,9]:
-      //adding the 2nd to 6th code and 11th code of UPC-A to present the 1st to 6th of UPC-E.
-      return data.substring(1,6) + data[10];
+      //elif manufacturer_code[-1] != "0" and int(product_code) in [5,6,7,8,9]:
+      // upce = manufacturer_code + product_code[-1]
+      return mc + pc.substring(pc.length-1);
     }
     else {
       throw BarcodeException('Unable to convert "$data" to $name Barcode');
