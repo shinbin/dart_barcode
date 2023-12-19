@@ -91,7 +91,7 @@ void main() {
 
   test('Barcode EAN normalize zeros', () {
 
-
+    //OLD upcaToUpce ERROR CONVERT IN [100802, 107444,100902,100965,555555,1..]
 
     //-------------------------------------------------------------
     final upce_fallback = Barcode.upcE(fallback: true);
@@ -100,7 +100,9 @@ void main() {
     }
 
     // expect(upce.normalize('1'), equals('010000000009'));
-    // expect(upce.normalize('100802'), equals('010000000009'));
+
+
+
 
     expect(upce_fallback.normalize('18740000015'), equals('18741538'));
     expect(upce_fallback.normalize('48347295752'), equals('483472957520'));
@@ -122,6 +124,7 @@ void main() {
     expect(upce.normalize('100902'), equals('01009028'));
     expect(upce.normalize('100965'), equals('01009651'));
     expect(upce.normalize('107444'), equals('01074448'));
+    expect(upce.normalize('000100'), equals('00001009'));
 
     expect(upce.normalize('042100005264'), equals('04252614'));
     expect(upce.normalize('020600000019'), equals('02060139'));
@@ -133,6 +136,21 @@ void main() {
     expect(upce.normalize('020201000098'), equals('02020198'));
     expect(upce.normalize('127200002013'), equals('12720123'));
     expect(upce.normalize('042100005264'), equals('04252614'));
+
+    //For special case : input '000105' etc.
+    //It's converted to '000010000052' ('L-MMMM0-0000P-C').
+    //This UPC-E ends with 5 , but its manufacturer code is '00010',
+    //which should be paired with the last code of UPC-E being 4.
+
+    //This situation does not comply with the encoding principles for conversion from UPC-A to UPC-E,
+    //but it applies to the conversion rules.
+    //It will be normalized to a new value when converting back to UPC-E.
+    //'000105' , '00001052' will be normalized to '00001542'.
+    expect(upce.normalize('000105'), equals('00001542'));
+    expect(upce.normalize('00001052'), equals('00001542'));
+    expect(upce.normalize('000154'), equals('00001542'));
+    expect(upce.normalize('00001542'), equals('00001542'));
+    expect(upce.normalize('000010000052'), equals('00001542'));
 
     return;
 

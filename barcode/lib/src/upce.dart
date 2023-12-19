@@ -77,11 +77,44 @@ class BarcodeUpcE extends BarcodeEan {
     if ( RegExp(r'^[01]\d{11}$').firstMatch(data) == null) {
       throw BarcodeException('Unable to convert "$data" to $name Barcode');
     }
+    //Refer to  https://en.wikipedia.org/wiki/Universal_Product_Code#UPC-E
+    //Both algorithms below are correct and have been tested.
+    //Algorithm 1: https://gist.github.com/corpit/8204456 (Implement in this function)
+    //Algorithm 2: https://www.keepautomation.com/upca/upca-to-upce-conversion.html
 
-    //Refer to  https://www.keepautomation.com/upca/upca-to-upce-conversion.html
-    //and https://en.wikipedia.org/wiki/Universal_Product_Code#UPC-E
+    // Algorithm 1=>
+    final mc = data.substring(1,6);  //manufacturer code
+    final pc = data.substring(6,11); //product code
+
+    if(['000', '100', '200'].contains(mc.substring(mc.length - 3)) && int.parse(pc) <= 999){
+      // if manufacturer_code[-3:]  in ["000", "100", "200"] and int(product_code) <= 999:
+      // adding the 2nd, 3rd, 9th, 10th, 11th, and 4th code of UPC-A to present the 1st to 6th of UPC-E.
+      return '${data.substring(1,3)}${data.substring(8,11)}${data[3]}';
+    }
+    else if(mc.substring(mc.length - 2) == '00' && int.parse(pc) <= 99){
+      // elif manufacturer_code[-2:] == '00' and int(product_code) <= 99:
+      //adding the 2nd, 3rd, 4th, 10th, 11th code of UPC-A and a digit 3 to present the 1st to 6th of UPC-E.
+      return '${data.substring(1,4)}${data.substring(9,11)}3';
+    }
+    else if(mc.substring(mc.length - 1) == '0' && int.parse(pc) <= 9){
+      //elif manufacturer_code[-1] == "0" and int(product_code) <= 9:
+      // adding the 2nd to 5th code, 11th code of UPC-A and a digit 4 to present the 1st to 6th of UPC-E.
+      return '${data.substring(1,5)}${data[10]}4';
+    }
+    else if(mc.substring(mc.length - 1) != '0' && [5, 6, 7, 8, 9].contains(int.parse(pc))){
+      // elif manufacturer_code[-1] != "0" and int(product_code) in [5,6,7,8,9]:
+      //adding the 2nd to 6th code and 11th code of UPC-A to present the 1st to 6th of UPC-E.
+      return data.substring(1,6) + data[10];
+    }
+    else {
+      throw BarcodeException('Unable to convert "$data" to $name Barcode');
+    }
+
+
+    // Algorithm 2=>
+    /*
     if([0x35, 0x36, 0x37, 0x38, 0x39].contains(data.codeUnits[10]) && data.substring(6,10) == '0000' && data[5] != '0') {
-      //If the 11th code of UPC-A equals to 5, 6, 7, 8 or 9, the 7th to 10th code are all 0, and the 6th is not 0,
+      //If the 11th code of UPC-A equals to 5, 6, 7, 8 or 9, the 7th to 10th code are all 0, and the 6th is not 0),
       //adding the 2nd to 6th code and 11th code of UPC-A to present the 1st to 6th of UPC-E.
       return data.substring(1,6) + data[10];
     }
@@ -103,6 +136,7 @@ class BarcodeUpcE extends BarcodeEan {
     else {
       throw BarcodeException('Unable to convert "$data" to $name Barcode');
     }
+    */
   }
 
   /// Convert a short version UPC-E barcode to a full length UPC-A
