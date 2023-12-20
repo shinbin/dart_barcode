@@ -91,71 +91,6 @@ void main() {
 
   test('Barcode EAN normalize zeros', () {
 
-    //OLD upcaToUpce ERROR CONVERT IN [100802, 107444,100902,100965,555555,1..]
-
-    //-------------------------------------------------------------
-    final upce_fallback = Barcode.upcE(fallback: true);
-    if (upce_fallback is! BarcodeEan) {
-      throw Exception('upce is not a BarcodeEan');
-    }
-
-    // expect(upce.normalize('1'), equals('010000000009'));
-
-
-
-
-    expect(upce_fallback.normalize('18740000015'), equals('18741538'));
-    expect(upce_fallback.normalize('48347295752'), equals('483472957520'));
-    expect(upce_fallback.normalize('555555'), equals('05555550'));
-    expect(upce_fallback.normalize('212345678992'), equals('212345678992'));
-    expect(upce_fallback.normalize('014233365553'), equals('014233365553'));
-
-//-------------------------------------------------------------
-
-    final upce = Barcode.upcE(fallback: false);
-    if (upce is! BarcodeEan) {
-      throw Exception('upce is not a BarcodeEan');
-    }
-    expect(upce.normalize('01008029'), equals('01008029'));
-    expect(upce.normalize('0100802'), equals('01008029'));
-    expect(upce.normalize('100802'), equals('01008029'));
-    expect(upce.normalize('1'), equals('01000009'));
-
-    expect(upce.normalize('100902'), equals('01009028'));
-    expect(upce.normalize('100965'), equals('01009651'));
-    expect(upce.normalize('107444'), equals('01074448'));
-    expect(upce.normalize('000100'), equals('00001009'));
-
-    expect(upce.normalize('042100005264'), equals('04252614'));
-    expect(upce.normalize('020600000019'), equals('02060139'));
-    expect(upce.normalize('040350000077'), equals('04035747'));
-    expect(upce.normalize('020201000050'), equals('02020150'));
-    expect(upce.normalize('020204000064'), equals('02020464'));
-    expect(upce.normalize('023456000073'), equals('02345673'));
-    expect(upce.normalize('020204000088'), equals('02020488'));
-    expect(upce.normalize('020201000098'), equals('02020198'));
-    expect(upce.normalize('127200002013'), equals('12720123'));
-    expect(upce.normalize('042100005264'), equals('04252614'));
-
-    //For special case : input '000105' etc.
-    //It's converted to '000010000052' ('L-MMMM0-0000P-C').
-    //This UPC-E ends with 5 , but its manufacturer code is '00010',
-    //which should be paired with the last code of UPC-E being 4.
-
-    //This situation does not comply with the encoding principles for conversion from UPC-A to UPC-E,
-    //but it applies to the conversion rules.
-    //It will be normalized to a new value when converting back to UPC-E.
-    //'000105' , '00001052' will be normalized to '00001542'.
-    expect(upce.normalize('000105'), equals('00001542'));
-    expect(upce.normalize('00001052'), equals('00001542'));
-    expect(upce.normalize('000154'), equals('00001542'));
-    expect(upce.normalize('00001542'), equals('00001542'));
-    expect(upce.normalize('000010000052'), equals('00001542'));
-    expect(upce.normalize('001054'), equals('00000514')); //another special case
-
-
-    return;
-
     final ean13 = Barcode.ean13();
     if (ean13 is! BarcodeEan) {
       throw Exception('ean13 is not a BarcodeEan');
@@ -198,12 +133,12 @@ void main() {
 
     expect(upca.normalize('3'), equals('300000000001'));
 
-    // final upce = Barcode.upcE(fallback: true);
-    // if (upce is! BarcodeEan) {
-    //   throw Exception('upce is not a BarcodeEan');
-    // }
-    //
-    // expect(upce.normalize('1'), equals('010000000009'));
+    final upce = Barcode.upcE(fallback: true);
+    if (upce is! BarcodeEan) {
+      throw Exception('upce is not a BarcodeEan');
+    }
+
+    expect(upce.normalize('1'), equals('010000000009'));
 
 
 
